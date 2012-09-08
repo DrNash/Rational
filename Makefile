@@ -30,7 +30,7 @@ CXXFLAGS += -g -Wall -Wextra
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample1_unittest gsample
+TESTS = sample1_unittest gsample rational_test
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -41,7 +41,7 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 all : $(TESTS)
 
-test : $(TESTS) run_tests clean
+test : $(TESTS) run_tests
 
 run_tests :
 	for i in $(TESTS); \
@@ -94,4 +94,14 @@ gsample.o : $(TEST_DIR)/gsample.cc $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/gsample.cc
 
 gsample : gsample.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+rational.o : $(USER_DIR)/rational.cc $(USER_DIR)/rational.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/rational.cc
+
+rational_test.o : $(TEST_DIR)/rational_test.cc \
+				  $(USER_DIR)/rational.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/rational_test.cc		
+
+rational_test : rational.o rational_test.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
