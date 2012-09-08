@@ -12,7 +12,7 @@ public:
 	Rational() {}
 
 	// C'tor for numerator only
-	Rational(int numerator);
+	Rational(int);
 	// C'tor for given numerator and denominators
 	Rational(int, int);
 	// C'tor for floating point argument
@@ -21,10 +21,20 @@ public:
 	int getNumerator() { return numerator_; }
 	int getDenominator() { return denominator_; }
 
+	Rational add(int);
+	Rational add(Rational);
+
+	void set(int, int);
+	void set(int);
+// TODO:	void set(double);
+
+	static int *findPrimeFactors(int);
+
 private:
 	///////////////////////////////////////////////////////////
 	//
 	// Helpers
 
 	double abs(double);
+	void reduceFractionToLowestTerms();
 };

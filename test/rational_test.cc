@@ -1,33 +1,125 @@
 #include "gtest/gtest.h"
 #include "rational.h"
 
-// Test zero numerator
-TEST(Rational, ZeroAsNumeratorConstructor) {
-	Rational zero = Rational(0);
+///////////////////////////////////////////////////////////
+//
+// Helper subroutines
 
-	ASSERT_EQ(0, zero.getNumerator());
-	ASSERT_EQ(1, zero.getDenominator());
+void validateRational(Rational rat, int p, int q) {
+	EXPECT_EQ(p, rat.getNumerator());
+	EXPECT_EQ(q, rat.getDenominator());
+}
+
+void validateArraySameOrderedMembers(int size, int *a, int *b) {
+	for(int i = 0; i < size; i++) {
+		EXPECT_EQ(a[i], b[i]);
+	}
+}
+
+///////////////////////////////////////////////////////////
+//
+// Tests
+
+////////////////////////////////
+//
+// Constructor Tests
+
+// Test zero numerator
+TEST(Rational, RationalFromZeroPConstructor) {
+	Rational myRat = Rational(0);
+
+	validateRational(myRat, 0, 1);
 }
 
 // Test some arbitrary (or is it?) number for the numerator
-TEST(Rational, ArbitraryNumeratorConstructor) {
-	Rational arbNumber = Rational(42);
+TEST(Rational, RationalFromArbitraryPConstructor) {
+	Rational myRat = Rational(42);
 
-	ASSERT_EQ(42, arbNumber.getNumerator());
-	ASSERT_EQ(1, arbNumber.getDenominator());
+	validateRational(myRat, 42, 1);
 }
 
 // Test using negative numbers for the numberator
-TEST(Rational, NegativeNumeratorConstructor) {
-	Rational negNumber = Rational(-28);
+TEST(Rational, RationalFromNegativePConstructor) {
+	Rational myRat = Rational(-28);
 
-	ASSERT_EQ(-28, negNumber.getNumerator());
-	ASSERT_EQ(1, negNumber.getDenominator());
+	validateRational(myRat, -28, 1);
 }
 
-TEST(Rational, FloatingPointConstructorLowDecimals) {
+TEST(Rational, RationalFromFloatingPointConstructor) {
 	Rational myRat = Rational(5.1f);
 
-	EXPECT_EQ(51, myRat.getNumerator());
-	EXPECT_EQ(10, myRat.getDenominator());
+	validateRational(myRat, 51, 10);
 }
+
+TEST(Rational, RationalFromPandQConstructor) {
+	Rational myRat = Rational(1,2);
+
+	validateRational(myRat, 1, 2);
+}
+
+TEST(Rational, RationalFromNegativePandQConstructor) {
+	Rational myRat = Rational(-1,2);
+	Rational myOtherRat = Rational(1,-2);
+
+	validateRational(myRat, -1, 2);
+	validateRational(myOtherRat, 1, -2);
+}
+
+TEST(Rational, RationalFromRationalConstructor) {
+	Rational mySourceRat = Rational(1,2);
+	Rational myRatRat = Rational(mySourceRat);
+
+	validateRational(myRatRat, 1, 2);
+}
+
+////////////////////////////////
+//
+// Arithmatic Tests
+
+TEST(Rational, Addition) {
+	Rational myRat = Rational(1,2);
+
+	Rational myResultRat = myRat.add(3);
+
+	validateRational(myResultRat, 7, 2);
+}
+
+TEST(Rational, AddtionWithNegatives) {
+	Rational myRat = Rational(-1,2);
+	Rational myFriendsRat = Rational(1,2);
+
+	Rational myResultRat = myRat.add(5);
+	Rational myFriendsResultRat = myFriendsRat.add(-5);
+
+	validateRational(myResultRat, 9, 2);
+	validateRational(myFriendsResultRat, -9, 2);	
+}
+
+TEST(Rational, AdditionWithAnotherRational) {
+	Rational myRat = Rational(1,2);
+	Rational myAddingRat = Rational(3,4);
+
+	Rational myResultRat = myRat.add(myAddingRat);
+
+//	validateRational(myResultRat, 5, 4);
+}
+
+TEST(Rational, ReduceRationalToLowestTerms) {
+	// When creating a non-reduced rational it should
+	// automaticaly reduce it to lowest terms
+	Rational myRat = Rational(6,4);
+
+//	validateRational(myRat, 3,2);
+}
+
+TEST(Rational, FindPrimeFactors) {
+	int *primeFactors = Rational::findPrimeFactors(20);
+	int expectedArray[3] = {2,2,5};
+
+	validateArraySameOrderedMembers(3, expectedArray, primeFactors);
+}
+
+TEST(Rational, AdditionIntoAWholeNumber) {
+	Rational myRat = Rational(1,2);
+}
+

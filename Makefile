@@ -30,7 +30,7 @@ CXXFLAGS += -g -Wall -Wextra
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample1_unittest gsample rational_test
+TESTS = rational_test
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -76,25 +76,7 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-# Builds a sample test.  A test should link with either gtest.a or
-# gtest_main.a, depending on whether it defines its own main()
-# function.
-
-sample1.o : $(USER_DIR)/sample1.cc $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1.cc
-
-sample1_unittest.o : $(TEST_DIR)/sample1_unittest.cc \
-                     $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/sample1_unittest.cc
-
-sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
-
-gsample.o : $(TEST_DIR)/gsample.cc $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/gsample.cc
-
-gsample : gsample.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+# Builds the tests and their associated objects
 
 rational.o : $(USER_DIR)/rational.cc $(USER_DIR)/rational.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/rational.cc
