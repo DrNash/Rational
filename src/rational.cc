@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include "rational.h"
 
 Rational::Rational(int numerator) : numerator_(numerator), denominator_(1) {}
@@ -83,20 +84,28 @@ void Rational::set(int givenP, int givenQ) {
 //
 // Static Rational oriented math helpers
 
+
+//	findPrimeFactors
+//		Given an int (number) and a int by reference (finalArraySize)
+//		findPrimeFactors will return an array of the prime factors
+//		of the number, and set the given reference int to the size
+//		of the resulting array.
+//
 int *Rational::findPrimeFactors(int number, int &finalArraySize) {
 	// Lets pretend negative numbers have prime factors
 	// (Math is digusted at me for saying this)
 	number < 0 ? number *= -1 : number;
 
-	// The number 1 is prime and its only prime factor
+	// The number 1 is special, return array of 1
 	if(number == 1) {
 		int *arrayOfOne = new int[1];
 		arrayOfOne[0] = 1;
+		finalArraySize = 1;
 		return arrayOfOne;
 	}
 
 	// For any other number, keep finding prime factors
-	// and dividing the number by them until all factors
+	// and dividing 'number' by them until all factors
 	// have been found
 	int *workArray = new int[50];
 	finalArraySize = 0;
@@ -119,6 +128,8 @@ int *Rational::findPrimeFactors(int number, int &finalArraySize) {
 		primeFactorArray[i] = workArray[i];
 	}
 
+	delete [] workArray;
+
 	return primeFactorArray;
 }
 
@@ -127,18 +138,42 @@ Rational Rational::reduceFractionToLowestTerms(Rational fatRat) {
 	int *numeratorPrimeFactors = findPrimeFactors(fatRat.getNumerator(), numeratorSize);
 	int *denominatorPrimeFactors = findPrimeFactors(fatRat.getDenominator(), denominatorSize);
 
-	int numberOfSharedFactors;
 	// workArray won't need to be greater than the smallest prime factors
-	int *workArray[(numeratorSize<denominatorSize ? numeratorSize : denominatorSize)];
+	int *workArray = new int[(numeratorSize<denominatorSize ? numeratorSize : denominatorSize)];
+	int numberOfSharedFactors = 0;
+	int x = 0;
+
 	for(int i = 0; i < numeratorSize; i++) {
-		for(int j = 0; j < denominatorSize; j++) {
+		for(int j = x; j < denominatorSize; j++) {
 			if(numeratorPrimeFactors[i] == denominatorPrimeFactors[j]) {
+				x = j + 1;
+				workArray[numberOfSharedFactors] = numeratorPrimeFactors[i];
 				numberOfSharedFactors++;
-//				workArray[i] = numeratorPrimeFactors[i];
+				break;
 			}
 		}
+	} 
+
+	// Now the greatest common factor is the common primes multiplied
+	int gcf = 0;  // greatest common factor
+	for(int i = 0; i < numberOfSharedFactors; i++) {
+		gcf += workArray[i];
 	}
 
+	// If there was no prime list, or if p or q was 1 we need to 
+	// be sure to return the original Rational value
+	Rational resultingRational = Rational(fatRat);
+	
+	// Likewise, don't go dividing by zero if there was no gcf
+	if(gcf > 0) {
+		int newP = fatRat.getNumerator() / gcf;
+		int newQ = fatRat.getDenominator() / gcf;
+		resultingRational = Rational(newP, newQ);
+	}
+
+	delete [] workArray;
+
+	return resultingRational; 
 }
 
 ///////////////////////////////////////////////////////////

@@ -136,15 +136,30 @@ TEST(Rational, FindPrimeFactorsNegative) {
 	validateArraySameOrderedMembers(size, expectedArrayNegative, primeFactorsNegative);
 }
 
-TEST(Rational, ReduceRationalToLowestTerms) {
-	// When creating a non-reduced rational it should
-	// automaticaly reduce it to lowest terms
+TEST(Rational, ReduceFractionToLowestTerms) {
 	Rational myRat = Rational(6,4);
-
-	validateRational(myRat, 3,2);
+	Rational reducedRat = Rational::reduceFractionToLowestTerms(myRat);
+	validateRational(reducedRat, 3,2);
 }
 
-TEST(Rational, AdditionIntoAWholeNumber) {
-	Rational myRat = Rational(1,2);
+TEST(Rational, ReduceFractionAlreadyReducedDoesntBomb) {
+	Rational myRat = Rational(3,2);
+	Rational reducedRat = Rational::reduceFractionToLowestTerms(myRat);
+	validateRational(reducedRat, 3, 2);
 }
+
+TEST(Rational, ReduceFractionOnZeroDoesntBomb) {
+	Rational myRat = Rational(0);
+	Rational reducedRat = Rational::reduceFractionToLowestTerms(myRat);
+	validateRational(reducedRat, 0, 1);	
+}
+
+TEST(Rational, ReduceFractionWholeNumberDoesntBomb) {
+	Rational myRat = Rational(8011234);
+	Rational reducedRat = Rational::reduceFractionToLowestTerms(myRat);
+	validateRational(reducedRat, 8011234, 1);
+}
+//TEST(Rational, AdditionIntoAWholeNumber) {
+//	Rational myRat = Rational(1,2);
+//}
 
