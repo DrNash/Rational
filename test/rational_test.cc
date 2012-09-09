@@ -104,19 +104,44 @@ TEST(Rational, AdditionWithAnotherRational) {
 //	validateRational(myResultRat, 5, 4);
 }
 
+TEST(Rational, FindPrimeFactors) {
+	int size;
+	int *primeFactors = Rational::findPrimeFactors(21931283, size); 
+	int expectedArray[size]; 
+	expectedArray[0] = 11, expectedArray[1] = 509, expectedArray[2] = 3917;
+	validateArraySameOrderedMembers(size, expectedArray, primeFactors);	
+}
+
+TEST(Rational, FindPrimeFactorsOfOne) {
+	int size;
+	int *primeFactorsOfOne = Rational::findPrimeFactors(1, size);
+	int expectedArrayOfOne[size];
+	expectedArrayOfOne[0] = 1;
+	validateArraySameOrderedMembers(size, expectedArrayOfOne, primeFactorsOfOne);
+}
+
+TEST(Rational, FindPrimeFactorsOfZero) {
+	int size;
+	int *primeFactorsOfZero = Rational::findPrimeFactors(0, size);
+	int expectedArrayOfZero[size];
+	expectedArrayOfZero[0] = 0;
+	validateArraySameOrderedMembers(size, expectedArrayOfZero, primeFactorsOfZero);
+}
+
+TEST(Rational, FindPrimeFactorsNegative) {
+	int size;
+	int *primeFactorsNegative = Rational::findPrimeFactors(-20, size);
+	int expectedArrayNegative[size];
+	expectedArrayNegative[0] = 2, expectedArrayNegative[1] = 2, expectedArrayNegative[2] = 5;
+	validateArraySameOrderedMembers(size, expectedArrayNegative, primeFactorsNegative);
+}
+
 TEST(Rational, ReduceRationalToLowestTerms) {
 	// When creating a non-reduced rational it should
 	// automaticaly reduce it to lowest terms
 	Rational myRat = Rational(6,4);
 
-//	validateRational(myRat, 3,2);
-}
-
-TEST(Rational, FindPrimeFactors) {
-	int *primeFactors = Rational::findPrimeFactors(20);
-	int expectedArray[3] = {2,2,5};
-
-	validateArraySameOrderedMembers(3, expectedArray, primeFactors);
+	validateRational(myRat, 3,2);
 }
 
 TEST(Rational, AdditionIntoAWholeNumber) {

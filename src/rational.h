@@ -28,13 +28,12 @@ public:
 	void set(int);
 // TODO:	void set(double);
 
-	static int *findPrimeFactors(int);
-
+	static int *findPrimeFactors(int, int&);
+	static Rational reduceFractionToLowestTerms(Rational);
 private:
 	///////////////////////////////////////////////////////////
 	//
 	// Helpers
 
 	double abs(double);
-	void reduceFractionToLowestTerms();
 };
