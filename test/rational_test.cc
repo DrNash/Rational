@@ -72,6 +72,12 @@ TEST(Rational, RationalFromRationalConstructor) {
 	validateRational(myRatRat, 1, 2);
 }
 
+TEST(Rational, RationalFromPandQUnreducedConstructor) {
+	Rational myRat = Rational(20,5);
+
+	validateRational(myRat, 4, 1);
+}
+
 ////////////////////////////////
 //
 // Arithmatic Tests
@@ -101,8 +107,54 @@ TEST(Rational, AdditionWithAnotherRational) {
 
 	Rational myResultRat = myRat.add(myAddingRat);
 
-//	validateRational(myResultRat, 5, 4);
+	validateRational(myResultRat, 5, 4);
 }
+
+TEST(Rational, AdditionWithANegativeRational) {
+	Rational myRat = Rational(1,2);
+	Rational myAddingRat = Rational(-3,4);
+
+	Rational myResultRat = myRat.add(myAddingRat);
+
+	validateRational(myResultRat, -1, 4);
+}
+
+TEST(Rational, AdditionWithAZeroRational) {
+	Rational myRat = Rational(1,2);
+	Rational myAddingRat = Rational(0);
+
+	Rational myResultRat = myRat.add(myAddingRat);
+
+	validateRational(myResultRat, 1, 2);
+}
+
+TEST(Rational, SubtractionWithWholeNumber) {
+	Rational myRat = Rational(4,3);
+
+	Rational myDifferenceRat = myRat.subtract(5);
+
+	validateRational(myDifferenceRat, -11, 3);
+}
+
+TEST(Rational, SubtractionWithNegativeWholeNumber) {
+	Rational myRat = Rational(4,3);
+
+	Rational myDifferenceRat = myRat.subtract(-5);
+
+	validateRational(myDifferenceRat, 19, 3);
+}
+
+TEST(Rational, SubtractionWithZero) {
+	Rational myRat = Rational(4,3);
+
+	Rational myDifferenceRat = myRat.subtract(0);
+
+	validateRational(myDifferenceRat, 4, 3);
+}
+
+////////////////////////////////
+//
+// Reduction Tests
 
 TEST(Rational, FindPrimeFactors) {
 	int size;

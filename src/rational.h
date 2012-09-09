@@ -21,8 +21,11 @@ public:
 	int getNumerator() { return numerator_; }
 	int getDenominator() { return denominator_; }
 
+	void reduceSelfToLowestTerms();
+
 	Rational add(int);
 	Rational add(Rational);
+	Rational subtract(int);
 
 	void set(int, int);
 	void set(int);
