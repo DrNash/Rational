@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stdexcept>
+#include <stdio.h>
+#include <stdlib.h>
 #include "rational.h"
 
 Rational::Rational(int numerator) : numerator_(numerator), denominator_(1) {}
@@ -42,7 +44,7 @@ Rational Rational::floatToRational(double floatRational) {
 			num *= 10;
 			// To avoid atoi eating the whole number
 			char temp = buffer[i];
-			num += std::atoi(&temp);
+			num += atoi(&temp);
 			if(pastDecimal) { den *= 10; }
 		} else {
 			pastDecimal = true;
