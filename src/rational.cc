@@ -1,45 +1,60 @@
 #include <iostream>
-#include <stdio.h>
+#include <stdexcept>
 #include "rational.h"
 
 Rational::Rational(int numerator) : numerator_(numerator), denominator_(1) {}
 Rational::Rational(int numerator, int denominator) : numerator_(numerator), denominator_(denominator) {
+
+	simplifySelf();
 	reduceSelfToLowestTerms();
 }
 
 Rational::Rational(double floatRational) {
-	numerator_ = 51;
-	denominator_ = 10;
-	/* char buffer[65];
+	Rational futureSelf = floatToRational(floatRational);
+	numerator_ = futureSelf.getNumerator();
+	denominator_ = futureSelf.getDenominator();
+}
+
+// floatToRational
+//		Rather than mathematically compute the rational of the float
+//		I push the float into a string (char *) to presrve its accuracy
+//		(or lack of). In this format it is easier to move through each
+//		position and build up the rational. When tried with math the
+//		precision errors of floats kept skewing the results.
+Rational Rational::floatToRational(double floatRational) {
+	char buffer[65];
 	int n;
 	n=sprintf(buffer, "%f", floatRational);
-	
 	for(int x = n-1; x >= 0; x--) {
-		bool endOfFloat = false;
-		if(buffer[x] == 48 && !endOfFloat) {
+		if(buffer[x] == 48) {
 			n--;
 		}
 		else {
-			endOfFloat = true;
+			break;
 		}
 	}
 
-	printf("%d", n);
-	printf("%s", buffer);
-
-	int multple = 1;
-	numerator_ = 0;
-	denominator_ = 1;
+	int num = 0;
+	int den = 1;
+	bool pastDecimal = false;
 	for(int i = 0; i < n; i++) {
 		if(buffer[i] != 46) {
-			numerator_ *= multple;
-			numerator_ += std::atoi(&buffer[i]);
-			multple *= 10;
-			denominator_ *= 10;
+			num *= 10;
+			// To avoid atoi eating the whole number
+			char temp = buffer[i];
+			num += std::atoi(&temp);
+			if(pastDecimal) { den *= 10; }
+		} else {
+			pastDecimal = true;
 		}
-	}	*/
+	}
 
+	if(floatRational < 0.0) { num *= -1; }
 
+	Rational resultRational = Rational(num, den);
+	resultRational.reduceSelfToLowestTerms();
+	resultRational.simplifySelf();
+	return resultRational;
 }
 
 // reduceSelfToLowestTerms
@@ -82,6 +97,17 @@ void Rational::reduceSelfToLowestTerms() {
 	if(gcf > 0) {
 		numerator_ /= gcf;
 		denominator_ /= gcf;
+	} 
+
+	numerator_ == 0 ? denominator_ = 1 : denominator_;
+}
+
+void Rational::simplifySelf() {
+	// Keep the negative always in the numerator, compensate
+	// for double negatives
+	if(denominator_ < 0) {
+		numerator_ *= -1;
+		denominator_ *= -1;
 	}
 }
 
@@ -111,6 +137,14 @@ Rational Rational::add(Rational summand) {
 	return resultingRational;
 }
 
+Rational Rational::add(double summand) {
+	Rational resultRational = Rational();
+	Rational summandRational = floatToRational(summand);
+
+	resultRational = add(summandRational);
+	return resultRational;
+}
+
 Rational Rational::subtract(int subtrahend) {
 	Rational resultingRational = Rational();
 	int resultP = numerator_ - (subtrahend * denominator_);
@@ -120,6 +154,187 @@ Rational Rational::subtract(int subtrahend) {
 	return resultingRational;
 }
 
+Rational Rational::subtract(Rational subtrahend) {
+	Rational resultingRational = Rational();
+	int commonDenominator = denominator_ * subtrahend.getDenominator();
+	int leftNumerator = numerator_ * subtrahend.getDenominator();
+	int rightNumerator = subtrahend.getNumerator() * denominator_;
+
+	resultingRational.set((leftNumerator - rightNumerator), commonDenominator);
+	// Since we did subtraction, ensure Rational is still in lowest terms
+	resultingRational.reduceSelfToLowestTerms();
+
+	return resultingRational;
+}
+
+Rational Rational::subtract(double subtrahend) {
+	Rational resultingRational = Rational();
+	Rational subtrahendRational = floatToRational(subtrahend);
+
+	resultingRational = subtract(subtrahendRational);
+	return resultingRational;
+}
+
+Rational Rational::multiply(int factor) {
+	Rational resultingRational = Rational();
+	int resultP = numerator_ * factor;
+
+	resultingRational.set(resultP, denominator_);
+
+	return resultingRational;
+}
+
+Rational Rational::multiply(Rational factor) {
+	Rational resultingRational = Rational();
+	int newNumerator = numerator_ * factor.getNumerator();
+	int newDenominator =  denominator_ * factor.getDenominator();
+
+	resultingRational.set(newNumerator, newDenominator);
+	// Since we did multiplication, ensure Rational is still in lowest terms
+	resultingRational.reduceSelfToLowestTerms();
+
+	return resultingRational;
+}
+
+Rational Rational::multiply(double factor) {
+	Rational resultingRational = Rational();
+	Rational factorRational = floatToRational(factor);
+
+	resultingRational = multiply(factorRational);
+	return resultingRational;
+}
+
+Rational Rational::divide(int divisor) {
+	Rational resultingRational = Rational();
+	int newDenominator = denominator_ * divisor;
+
+	resultingRational.set(numerator_, newDenominator);
+	resultingRational.reduceSelfToLowestTerms();
+	resultingRational.simplifySelf();
+
+	return resultingRational;
+}
+
+Rational Rational::divide(Rational divisor) {
+	if(divisor.getNumerator() == 0 ) {
+		throw std::overflow_error("Divide by zero expection");
+	}
+
+	Rational resultingRational = Rational();
+
+	//Multiply by reciprocal
+	int newNumerator = numerator_ * divisor.getDenominator();
+	int newDenominator =  denominator_ * divisor.getNumerator();
+
+	resultingRational.set(newNumerator, newDenominator);
+	// Since we did multiplication, ensure Rational is still in lowest terms
+	resultingRational.reduceSelfToLowestTerms();
+	resultingRational.simplifySelf();
+
+	return resultingRational;
+}
+
+Rational Rational::divide(double divisor) {
+	Rational resultingRational = Rational();
+	Rational divisorRational = floatToRational(divisor);
+
+	resultingRational = divide(divisorRational);
+	return resultingRational;
+}
+
+Rational Rational::pow(int exponent) {
+	Rational resultingRational = Rational();
+
+	int newNumerator;
+	int newDenominator;
+
+	
+	if(exponent < 0) {
+		newNumerator = pow(denominator_, (exponent * -1));
+		newDenominator = pow(numerator_, (exponent * -1));
+	} else {
+		newNumerator = pow(numerator_, exponent);
+	 	newDenominator = pow(denominator_, exponent);
+	}
+
+	resultingRational.set(newNumerator, newDenominator);
+	resultingRational.reduceSelfToLowestTerms();
+	resultingRational.simplifySelf();
+
+	return resultingRational;
+}
+
+void Rational::neg() {
+	numerator_ *= -1;
+}
+
+void Rational::recip() {
+	// Swap numerator and denominator
+	int temp = numerator_;
+	numerator_ = denominator_;
+	denominator_ = temp;
+
+	simplifySelf();
+}
+
+void Rational::abs() {
+	numerator_ < 0 ? numerator_ *= -1 : numerator_;
+}
+
+void Rational::square() {
+	Rational tempRat = pow(2);
+
+	numerator_ = tempRat.getNumerator();
+	denominator_ = tempRat.getDenominator();
+	reduceSelfToLowestTerms();
+	simplifySelf();
+}
+
+
+///////////////////////////////////////////////////////////
+//
+// Comparison Functions
+
+bool Rational::lessThan(Rational rat) {
+	// Find common ground
+	int myCommonNum = rat.getDenominator() * numerator_;
+	int theirCommonNum = rat.getNumerator() * denominator_;
+
+	return (myCommonNum < theirCommonNum ? true : false);
+}
+
+bool Rational::greaterThan(Rational rat) {
+	// Find common ground
+	int myCommonNum = rat.getDenominator() * numerator_;
+	int theirCommonNum = rat.getNumerator() * denominator_;
+
+	return (myCommonNum > theirCommonNum ? true : false);
+}
+
+bool Rational::equal(Rational rat) {
+	// Find common ground
+	int myCommonNum = rat.getDenominator() * numerator_;
+	int theirCommonNum = rat.getNumerator() * denominator_;
+
+	return (myCommonNum  == theirCommonNum ? true : false);
+}
+
+bool Rational::greaterThanOrEqual(Rational rat) {
+	// Find common ground
+	int myCommonNum = rat.getDenominator() * numerator_;
+	int theirCommonNum = rat.getNumerator() * denominator_;
+
+	return (myCommonNum  >= theirCommonNum ? true : false);
+}
+
+bool Rational::lessThanOrEqual(Rational rat) {
+	// Find common ground
+	int myCommonNum = rat.getDenominator() * numerator_;
+	int theirCommonNum = rat.getNumerator() * denominator_;
+
+	return (myCommonNum  <= theirCommonNum ? true : false);
+}
+
 ///////////////////////////////////////////////////////////
 //
 // Getters and Setters
@@ -127,11 +342,25 @@ Rational Rational::subtract(int subtrahend) {
 void Rational::set(int givenP) {
 	numerator_ = givenP;
 	denominator_ = 1;
+	reduceSelfToLowestTerms();
+	simplifySelf();
 }
 
 void Rational::set(int givenP, int givenQ) {
 	numerator_ = givenP;
 	denominator_ = givenQ;
+	reduceSelfToLowestTerms();
+	simplifySelf();
+}
+
+void Rational::set(double floatNumber) {
+	Rational floatRat = floatToRational(floatNumber);
+	numerator_ = floatRat.getNumerator();
+	denominator_ = floatRat.getDenominator();
+}
+
+double Rational::toDouble() {
+	return (1.0 * numerator_) / denominator_;
 }
 
 
@@ -208,3 +437,12 @@ Rational Rational::reduceFractionToLowestTerms(Rational fatRat) {
 double Rational::abs(double number)  {  
   return (number > 0.0 ? number : number * -1);  
 } 
+
+int Rational::pow(int base, int exponent) {
+	int result = 1;
+	for(int i = 0; i < exponent; i++) {
+		result *= base;
+	}
+
+	return result;
+}
