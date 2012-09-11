@@ -11,12 +11,14 @@ public:
   	// The default c'tor 
 	Rational() {}
 	// C'tor for numerator only
-	Rational(int);
+	Rational(const int);
 	// C'tor for given numerator and denominators
-	Rational(int, int);
+	Rational(const int, const int);
 	// C'tor for floating point argument
-	Rational(double);
-	// Default copy contructor works fine 
+	Rational(const double);
+	
+	// Copy c'tor for deep copies yo
+	Rational(const Rational& original);
 
 	enum WriteOutput {FRACTION, DECIMAL};
 
@@ -24,18 +26,18 @@ public:
   	//
   	// Getters and Setters
 
-	int getNumerator() { return numerator_; }
-	int getDenominator() { return denominator_; }
-	void set(int, int);
-	void set(int);
-	void set(double);
-	double toDouble();
+	int getNumerator() const { return numerator_; }
+	int getDenominator() const { return denominator_; }
+	void set(const int, const int);
+	void set(const int);
+	void set(const double);
+	double toDouble() const;
 
  	////////////////////////////////////////////////////////////
   	//
   	// Reduction and Sanity
 
-	Rational floatToRational(double);
+	Rational floatToRational(const double) const;
 	void reduceSelfToLowestTerms();
 	void simplifySelf();
 
@@ -43,20 +45,20 @@ public:
   	//
   	// Arithmetic Functions
 
-	Rational add(int);
-	Rational add(double);
-	Rational add(Rational);
-	Rational subtract(int);
-	Rational subtract(Rational);
-	Rational subtract(double);
-	Rational multiply(int);
-	Rational multiply(Rational);
-	Rational multiply(double);
-	Rational divide(int);
-	Rational divide(double);
-	Rational divide(Rational);
-	Rational pow(int);
-	int pow(int,int);
+	Rational add(const int) const;
+	Rational add(const double) const;
+	Rational add(const Rational) const;
+	Rational subtract(const int) const;
+	Rational subtract(Rational) const;
+	Rational subtract(const double) const;
+	Rational multiply(const int) const;
+	Rational multiply(const Rational) const;
+	Rational multiply(const double) const;
+	Rational divide(const int) const;
+	Rational divide(const double) const;
+	Rational divide(const Rational) const;
+	Rational pow(const int) const;
+	int pow(const int,const int) const;
 
 	void neg();
 	void recip();
@@ -67,11 +69,11 @@ public:
   	//
   	// Comparison Functions
 
-	bool lessThan(Rational);
-	bool greaterThan(Rational);
-	bool equal(Rational);
-	bool lessThanOrEqual(Rational);
-	bool greaterThanOrEqual(Rational);
+	bool lessThan(const Rational) const;
+	bool greaterThan(const Rational) const;
+	bool equal(const Rational) const;
+	bool lessThanOrEqual(const Rational) const;
+	bool greaterThanOrEqual(const Rational) const;
 
 	////////////////////////////////////////////////////////////
   	//
@@ -85,13 +87,14 @@ public:
   	//
   	// Static Helpers
 
-	static int *findPrimeFactors(int, int&);
+	static int *findPrimeFactors(const int, int&);
 	static Rational reduceFractionToLowestTerms(Rational);
 
+	
 private:
 	///////////////////////////////////////////////////////////
 	//
 	// Helpers
 
-	double abs(double);
+	double abs(const double) const;
 };

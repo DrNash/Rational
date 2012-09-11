@@ -58,7 +58,7 @@ TEST(Rational, RationalFromFloatingPointConstructor) {
 	Rational myDownerRat = Rational(-10.44);
 
 	validateRational(myRat, 51, 10);
-	validateRational(myFriendsRat, 51, 5);
+	validateRational(myFriendsRat, 41, 4);
 	validateRational(hisFriendsRat, 11113333,10000);
 	validateRational(myDownerRat, -261, 25);
 }
@@ -90,6 +90,25 @@ TEST(Rational, RationalFromPandQUnreducedConstructor) {
 	Rational myRat = Rational(20,5);
 
 	validateRational(myRat, 4, 1);
+}
+
+TEST(Rational, CopyConstructorTest) {
+	Rational * myRat = new Rational(20,5);
+	Rational * friendlyRat = new Rational(*myRat);
+
+	delete [] myRat;
+	myRat = new Rational(100,101);
+
+	validateRational((*friendlyRat), 4 ,1);
+}
+
+TEST(Rational, AssignmentTest) {
+	Rational friendlyRat = Rational(5,5);
+	Rational meanRat = friendlyRat;
+	friendlyRat.set(2,3);
+
+	validateRational(meanRat, 1 ,1);
+	validateRational(friendlyRat, 2, 3);
 }
 
 ////////////////////////////////
@@ -167,6 +186,15 @@ TEST(Rational, AddtionWithNegativeFloats) {
 
 	validateRational(myResultRat, 0, 1);
 	validateRational(myFriendsResultRat, -2, 1);	
+}
+
+TEST(Rational, AdditionWithAnotherRationalConst) {
+	Rational myRat = Rational(1,2);
+	Rational const myAddingRat = Rational(3,4);
+
+	Rational myResultRat = myRat.add(myAddingRat);
+
+	validateRational(myResultRat, 5, 4);
 }
 
 //////////////////
@@ -383,6 +411,15 @@ TEST(Rational, DivisionWithAZeroFloat) {
 	Rational myDividedRat = Rational(0.0);
 
 	EXPECT_ANY_THROW(myRat.divide(myDividedRat));
+}
+
+TEST(Rational, DivideWholeNumberByWholeNumer) {
+	Rational myRat = Rational(9,1);
+	Rational myDividedRat = Rational(18,1);
+
+	Rational myResultRat = myRat.divide(myDividedRat);
+
+	validateRational(myResultRat, 1, 2);
 }
 
 //////////////////

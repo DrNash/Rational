@@ -41,7 +41,7 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 all : $(TESTS) main
 
-test : $(TESTS) run_tests
+test : $(TESTS) run_tests clean
 
 run_tests :
 	for i in $(TESTS); \

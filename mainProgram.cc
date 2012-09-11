@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 	cout << "Hello observer, if you'd like to see the "
 	"workings of class Rational or RationalArray "
 	"please run 'make test' "
-	"from this directory. You will see the 69 test "
+	"from this directory. You will see the 73 test "
 	"cases pass (hopefully) covering most all of "
 	"Rational's behaviors. The classes were test "
 	"driven so the majority of behaviors are backed by tests.\n\n"

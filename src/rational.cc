@@ -4,18 +4,46 @@
 #include <stdlib.h>
 #include "rational.h"
 
-Rational::Rational(int numerator) : numerator_(numerator), denominator_(1) {}
-Rational::Rational(int numerator, int denominator) : numerator_(numerator), denominator_(denominator) {
+// Constructor with just num
+// Make the denominator 1
+//
+Rational::Rational(const int numerator) : numerator_(numerator), denominator_(1) {}
+
+// Constructor with both numerator and denominator
+// Set internal variables appropriately, simplify and reduce
+//
+Rational::Rational(const int numerator, const int denominator) : numerator_(numerator), denominator_(denominator) {
 
 	simplifySelf();
 	reduceSelfToLowestTerms();
 }
 
-Rational::Rational(double floatRational) {
+// Constructor fom double
+// Create a Rational from double (lots of work) then
+// properly assign the num/den. Simplification and 
+// lowest terms done in floatToRational
+//
+Rational::Rational(const double floatRational) {
 	Rational futureSelf = floatToRational(floatRational);
 	numerator_ = futureSelf.getNumerator();
 	denominator_ = futureSelf.getDenominator();
 }
+
+// Copy constructor
+// Be sure we make deep copies of the internal variables, not just
+// reference the original's variables in case the original goes
+// out of scope or gets deleted
+//
+Rational::Rational(const Rational& original) {
+	numerator_ = original.getNumerator();
+	denominator_ = original.getDenominator();
+}
+
+// Assignment operator
+// Ensure 
+//Rational &operator=(const Rational& rightSide) {
+
+// }
 
 // floatToRational
 //		Rather than mathematically compute the rational of the float
@@ -23,7 +51,7 @@ Rational::Rational(double floatRational) {
 //		(or lack of). In this format it is easier to move through each
 //		position and build up the rational. When tried with math the
 //		precision errors of floats kept skewing the results.
-Rational Rational::floatToRational(double floatRational) {
+Rational Rational::floatToRational(const double floatRational) const {
 	char buffer[65];
 	int n;
 	n=sprintf(buffer, "%f", floatRational);
@@ -89,9 +117,9 @@ void Rational::reduceSelfToLowestTerms() {
 	} 
 
 	// Now the greatest common factor is the common primes multiplied
-	int gcf = 0;  // greatest common factor
+	int gcf = 1;  // greatest common factor
 	for(int i = 0; i < numberOfSharedFactors; i++) {
-		gcf += workArray[i];
+		gcf *= workArray[i];
 	}
 	delete [] workArray; 
 
@@ -104,9 +132,11 @@ void Rational::reduceSelfToLowestTerms() {
 	numerator_ == 0 ? denominator_ = 1 : denominator_;
 }
 
+// SimplifySelf
+// 	Keep the negative always in the numerator, compensate
+// 	for double negatives
+//
 void Rational::simplifySelf() {
-	// Keep the negative always in the numerator, compensate
-	// for double negatives
 	if(denominator_ < 0) {
 		numerator_ *= -1;
 		denominator_ *= -1;
@@ -117,7 +147,7 @@ void Rational::simplifySelf() {
 //
 // Binary Arithmatic Functions
 
-Rational Rational::add(int summand) {
+Rational Rational::add(const int summand) const {
 	Rational resultingRational = Rational();
 	int resultP = numerator_ + (summand * denominator_);
 
@@ -126,29 +156,27 @@ Rational Rational::add(int summand) {
 	return resultingRational;
 }
 
-Rational Rational::add(Rational summand) {
+Rational Rational::add(const Rational summand) const {
 	Rational resultingRational = Rational();
 	int commonDenominator = denominator_ * summand.getDenominator();
 	int leftNumerator = numerator_ * summand.getDenominator();
 	int rightNumerator = summand.getNumerator() * denominator_;
 
 	resultingRational.set((leftNumerator + rightNumerator), commonDenominator);
-	// Since we did addition, ensure Rational is still in lowest terms
-	resultingRational.reduceSelfToLowestTerms();
 
 	return resultingRational;
 }
 
-Rational Rational::add(double summand) {
+Rational Rational::add(const double summand) const {
 	Rational resultRational = Rational();
 	Rational summandRational = floatToRational(summand);
 
 	resultRational = add(summandRational);
-	resultRational.reduceSelfToLowestTerms();
+
 	return resultRational;
 }
 
-Rational Rational::subtract(int subtrahend) {
+Rational Rational::subtract(const int subtrahend) const {
 	Rational resultingRational = Rational();
 	int resultP = numerator_ - (subtrahend * denominator_);
 
@@ -157,20 +185,18 @@ Rational Rational::subtract(int subtrahend) {
 	return resultingRational;
 }
 
-Rational Rational::subtract(Rational subtrahend) {
+Rational Rational::subtract(const Rational subtrahend) const {
 	Rational resultingRational = Rational();
 	int commonDenominator = denominator_ * subtrahend.getDenominator();
 	int leftNumerator = numerator_ * subtrahend.getDenominator();
 	int rightNumerator = subtrahend.getNumerator() * denominator_;
 
 	resultingRational.set((leftNumerator - rightNumerator), commonDenominator);
-	// Since we did subtraction, ensure Rational is still in lowest terms
-	resultingRational.reduceSelfToLowestTerms();
 
 	return resultingRational;
 }
 
-Rational Rational::subtract(double subtrahend) {
+Rational Rational::subtract(const double subtrahend) const {
 	Rational resultingRational = Rational();
 	Rational subtrahendRational = floatToRational(subtrahend);
 
@@ -178,7 +204,7 @@ Rational Rational::subtract(double subtrahend) {
 	return resultingRational;
 }
 
-Rational Rational::multiply(int factor) {
+Rational Rational::multiply(const int factor) const {
 	Rational resultingRational = Rational();
 	int resultP = numerator_ * factor;
 
@@ -187,19 +213,17 @@ Rational Rational::multiply(int factor) {
 	return resultingRational;
 }
 
-Rational Rational::multiply(Rational factor) {
+Rational Rational::multiply(const Rational factor) const {
 	Rational resultingRational = Rational();
 	int newNumerator = numerator_ * factor.getNumerator();
 	int newDenominator =  denominator_ * factor.getDenominator();
 
 	resultingRational.set(newNumerator, newDenominator);
-	// Since we did multiplication, ensure Rational is still in lowest terms
-	resultingRational.reduceSelfToLowestTerms();
 
 	return resultingRational;
 }
 
-Rational Rational::multiply(double factor) {
+Rational Rational::multiply(const double factor) const {
 	Rational resultingRational = Rational();
 	Rational factorRational = floatToRational(factor);
 
@@ -207,18 +231,16 @@ Rational Rational::multiply(double factor) {
 	return resultingRational;
 }
 
-Rational Rational::divide(int divisor) {
+Rational Rational::divide(const int divisor) const {
 	Rational resultingRational = Rational();
 	int newDenominator = denominator_ * divisor;
 
 	resultingRational.set(numerator_, newDenominator);
-	resultingRational.reduceSelfToLowestTerms();
-	resultingRational.simplifySelf();
 
 	return resultingRational;
 }
 
-Rational Rational::divide(Rational divisor) {
+Rational Rational::divide(const Rational divisor) const {
 	if(divisor.getNumerator() == 0 ) {
 		throw std::overflow_error("Divide by zero expection");
 	}
@@ -230,14 +252,11 @@ Rational Rational::divide(Rational divisor) {
 	int newDenominator =  denominator_ * divisor.getNumerator();
 
 	resultingRational.set(newNumerator, newDenominator);
-	// Since we did multiplication, ensure Rational is still in lowest terms
-	resultingRational.reduceSelfToLowestTerms();
-	resultingRational.simplifySelf();
 
 	return resultingRational;
 }
 
-Rational Rational::divide(double divisor) {
+Rational Rational::divide(const double divisor) const {
 	Rational resultingRational = Rational();
 	Rational divisorRational = floatToRational(divisor);
 
@@ -245,7 +264,7 @@ Rational Rational::divide(double divisor) {
 	return resultingRational;
 }
 
-Rational Rational::pow(int exponent) {
+Rational Rational::pow(const int exponent) const {
 	Rational resultingRational = Rational();
 
 	int newNumerator;
@@ -261,8 +280,6 @@ Rational Rational::pow(int exponent) {
 	}
 
 	resultingRational.set(newNumerator, newDenominator);
-	resultingRational.reduceSelfToLowestTerms();
-	resultingRational.simplifySelf();
 
 	return resultingRational;
 }
@@ -298,7 +315,7 @@ void Rational::square() {
 //
 // Comparison Functions
 
-bool Rational::lessThan(Rational rat) {
+bool Rational::lessThan(const Rational rat) const {
 	// Find common ground
 	int myCommonNum = rat.getDenominator() * numerator_;
 	int theirCommonNum = rat.getNumerator() * denominator_;
@@ -306,7 +323,7 @@ bool Rational::lessThan(Rational rat) {
 	return (myCommonNum < theirCommonNum ? true : false);
 }
 
-bool Rational::greaterThan(Rational rat) {
+bool Rational::greaterThan(const Rational rat) const {
 	// Find common ground
 	int myCommonNum = rat.getDenominator() * numerator_;
 	int theirCommonNum = rat.getNumerator() * denominator_;
@@ -314,7 +331,7 @@ bool Rational::greaterThan(Rational rat) {
 	return (myCommonNum > theirCommonNum ? true : false);
 }
 
-bool Rational::equal(Rational rat) {
+bool Rational::equal(const Rational rat) const {
 	// Find common ground
 	int myCommonNum = rat.getDenominator() * numerator_;
 	int theirCommonNum = rat.getNumerator() * denominator_;
@@ -322,7 +339,7 @@ bool Rational::equal(Rational rat) {
 	return (myCommonNum  == theirCommonNum ? true : false);
 }
 
-bool Rational::greaterThanOrEqual(Rational rat) {
+bool Rational::greaterThanOrEqual(const Rational rat) const {
 	// Find common ground
 	int myCommonNum = rat.getDenominator() * numerator_;
 	int theirCommonNum = rat.getNumerator() * denominator_;
@@ -330,7 +347,7 @@ bool Rational::greaterThanOrEqual(Rational rat) {
 	return (myCommonNum  >= theirCommonNum ? true : false);
 }
 
-bool Rational::lessThanOrEqual(Rational rat) {
+bool Rational::lessThanOrEqual(const Rational rat) const {
 	// Find common ground
 	int myCommonNum = rat.getDenominator() * numerator_;
 	int theirCommonNum = rat.getNumerator() * denominator_;
@@ -342,27 +359,27 @@ bool Rational::lessThanOrEqual(Rational rat) {
 //
 // Getters and Setters
 
-void Rational::set(int givenP) {
+void Rational::set(const int givenP) {
 	numerator_ = givenP;
 	denominator_ = 1;
 	reduceSelfToLowestTerms();
 	simplifySelf();
 }
 
-void Rational::set(int givenP, int givenQ) {
+void Rational::set(const int givenP, const int givenQ) {
 	numerator_ = givenP;
 	denominator_ = givenQ;
 	reduceSelfToLowestTerms();
 	simplifySelf();
 }
 
-void Rational::set(double floatNumber) {
+void Rational::set(const double floatNumber) {
 	Rational floatRat = floatToRational(floatNumber);
 	numerator_ = floatRat.getNumerator();
 	denominator_ = floatRat.getDenominator();
 }
 
-double Rational::toDouble() {
+double Rational::toDouble() const {
 	return (1.0 * numerator_) / denominator_;
 }
 
@@ -378,13 +395,14 @@ double Rational::toDouble() {
 //		of the number, and set the given reference int to the size
 //		of the resulting array.
 //
-int *Rational::findPrimeFactors(int number, int &finalArraySize) {
+int *Rational::findPrimeFactors(const int number, int &finalArraySize) {
 	// Lets pretend negative numbers have prime factors
 	// (Math is digusted at me for saying this)
-	number < 0 ? number *= -1 : number;
+	int number_ = number;
+	number_ < 0 ? number_ *= -1 : number_;
 
 	// The number 1 is special, return array of 1
-	if(number == 1) {
+	if(number_ == 1) {
 		int *arrayOfOne = new int[1];
 		arrayOfOne[0] = 1;
 		finalArraySize = 1;
@@ -397,11 +415,11 @@ int *Rational::findPrimeFactors(int number, int &finalArraySize) {
 	int *workArray = new int[50];
 	finalArraySize = 0;
 
-	for(int i=0; i < number; i++) {
-		for(int x=2; x <= number; x++) {
-			if(number % x == 0) {
+	for(int i=0; i < number_; i++) {
+		for(int x=2; x <= number_; x++) {
+			if(number_ % x == 0) {
 				workArray[i] = x;
-				number /= x;
+				number_ /= x;
 				finalArraySize++;
 				break;
 			}
@@ -458,11 +476,11 @@ void Rational::read(std::istream& input) {
 //
 // Helpers
 
-double Rational::abs(double number)  {  
+double Rational::abs(const double number) const {  
   return (number > 0.0 ? number : number * -1);  
 } 
 
-int Rational::pow(int base, int exponent) {
+int Rational::pow(const int base, const int exponent) const {
 	int result = 1;
 	for(int i = 0; i < exponent; i++) {
 		result *= base;

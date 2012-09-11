@@ -16,6 +16,20 @@ void charArrayEqual(int size, const char *a, const char *b) {
 //
 // Tests
 
+TEST(RationalArray, CopyConstructor) {
+	RationalArray myRatRay = RationalArray();
+	Rational myRat = Rational(1,2);
+	myRatRay.add(myRat);
+
+	RationalArray mySuperRatRay = RationalArray(myRatRay);
+	myRatRay.remove(0);
+	myRatRay.add(Rational(5,4));
+
+	Rational rat = mySuperRatRay.retrieve(0);
+	EXPECT_EQ(1, rat.getNumerator());
+	EXPECT_EQ(2, rat.getDenominator());
+}
+
 TEST(RationalArray, AddRationalToRatArray) {
 	RationalArray myRatRay = RationalArray();
 	Rational myRat = Rational(1,2);
