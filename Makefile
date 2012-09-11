@@ -39,7 +39,7 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 # House-keeping build targets.
 
-all : $(TESTS)
+all : $(TESTS) main
 
 test : $(TESTS) run_tests
 
@@ -50,7 +50,7 @@ run_tests :
 	done \
 
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a *.o
+	rm -f $(TESTS) gtest.a gtest_main.a *.o main
 
 # Builds gtest.a and gtest_main.a.
 
@@ -97,3 +97,6 @@ rational_array_test.o : $(TEST_DIR)/rational_array_test.cc \
 
 rational_array_test : rational.o rational_array.o rational_array_test.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+main : rational.o rational_array.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@ mainProgram.cc

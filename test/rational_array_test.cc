@@ -71,9 +71,9 @@ TEST(RationalArray, ReplaceRationalAtIndex) {
 	Rational myFirstRat = myRatRay.retrieve(0);
 	Rational mySecondRat = myRatRay.retrieve(1);
 	Rational myThirdRat = myRatRay.retrieve(2);
-	EXPECT_TRUE(myRat.equal(myRat));
+	EXPECT_TRUE(myRat.equal(myFirstRat));
 	EXPECT_TRUE(myImprovedRat.equal(mySecondRat));
-	EXPECT_TRUE(myRat.equal(myRat));
+	EXPECT_TRUE(myRat.equal(myThirdRat));
 }
 
 TEST(RationalArray, RemoveElement) {

@@ -27,6 +27,12 @@ void RationalArray::replace(int index, Rational ratReplacement) {
 	it = ratArray.begin();
 
 	ratArray.insert(it+index, ratReplacement);
+
+	// Here's a tricky animal, when you insert or erase from
+	// a vector is invalidates all interators, you only run into
+	// issues though if you've crossed memory lines... like oh
+	// say erasing some accounting blocks used in a given alloc...
+	it = ratArray.begin();
 	ratArray.erase(it+index+1);
 }
 

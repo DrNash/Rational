@@ -144,6 +144,7 @@ Rational Rational::add(double summand) {
 	Rational summandRational = floatToRational(summand);
 
 	resultRational = add(summandRational);
+	resultRational.reduceSelfToLowestTerms();
 	return resultRational;
 }
 
