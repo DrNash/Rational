@@ -30,7 +30,7 @@ CXXFLAGS += -g -Wall -Wextra
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = rational_test
+TESTS = rational_test rational_array_test
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -86,4 +86,14 @@ rational_test.o : $(TEST_DIR)/rational_test.cc \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/rational_test.cc		
 
 rational_test : rational.o rational_test.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+rational_array.o : $(USER_DIR)/rational_array.cc $(USER_DIR)/rational_array.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/rational_array.cc
+
+rational_array_test.o : $(TEST_DIR)/rational_array_test.cc \
+				  $(USER_DIR)/rational_array.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/rational_array_test.cc		
+
+rational_array_test : rational.o rational_array.o rational_array_test.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
