@@ -44,6 +44,13 @@ Usage:
 
 		The test output should be directed to stdout.
 
+	Building Main Alone:
+		Execute:
+
+		'make main'
+
+		to get just a 'main' program without building all the test objects from 'make all'.  This still requires the GTEST headers (include paths) but won't link any code to the gtest objects.
+
 	Cleaning Up:
 		Execute:
 
