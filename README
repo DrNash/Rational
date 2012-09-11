@@ -1,0 +1,52 @@
+# README
+Author: Ryan Nash
+Date: 9/11/2012
+
+This is my submission to test out of the Fundamentals of C++ course. It is the final project from that course. The project specified two classes and a main function to use those classes. The classes were Rational and RationalArray.
+
+Contents:
+	Directories
+		* gtest - google test's testing libraries, needed for make test
+		* src - all the class source and header files
+		* test - all the application tests for Rational and RationalArray
+
+	Files
+		src/rational.h - Header file for the Rational class
+		src/rational.cc - Implementation file for the Rational class
+		test/rational_test.cc - Tests for Rational class 
+		src/rational_array.h - Header file for the RationalArray class
+		src/rational_array.cc - Implementation file for the RationalArray class
+		test/rational_array_test.cc - Tests for RationalArray class
+
+		Makefile - File used to build project, run tests, clean up files
+		mainProgram.cc - A single main function executing assignments behavior
+		REAME - This file
+
+Usage:
+	Running Main:
+		Execute 'make' from the directory of this project.
+		Execute resulting executable file: "main"
+		'./main'
+
+	Running Tests:
+		Execute:
+
+		 'make test' 
+
+		from the directory of this project.
+
+		This will build gtest, the source and header files as well as link a 'gtest_main' function to each test file, then automatically execute the resulting executables. Test output is 2 executables for this project (rational_test and rational_array_test). These are full programs that can be run independently, make test just auto-executes them. However, for cleanliness, make tests also runs 'make clean' when finished.  If you want the test executables to persist you can run:
+
+		'make rational_test'
+		'make rational_array_test'
+
+		And then execute those independently.
+
+		The test output should be directed to stdout.
+
+	Cleaning Up:
+		Execute:
+
+		'make clean'
+
+		to delete all executables and object files.
