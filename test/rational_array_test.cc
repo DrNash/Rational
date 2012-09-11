@@ -53,7 +53,6 @@ TEST(RationalArray, RetriveRatOutOfBounds) {
 	const char error[] = "No Rational at that Index";
 	const char* returnStr = text.c_str();
 
-	EXPECT_FALSE(myRat.equal(myRatReborn));
 	charArrayEqual(24, error, returnStr);
 }
 
@@ -96,10 +95,11 @@ TEST(RationalArray, RemoveElement) {
 	
 	// Put cerr back
 	std::cerr.rdbuf(old);
+	size_t expectedSize = 2;
 
 	EXPECT_TRUE(myFirstRat.equal(myRat));
 	EXPECT_TRUE(mySecondRat.equal(myRat2));
-	EXPECT_FALSE(myThirdRat.equal(myRat1));
+	EXPECT_EQ(expectedSize, myRatRay.size());
 }
 
 TEST(RationalArray, RatArraySize) {
