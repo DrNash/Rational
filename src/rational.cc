@@ -434,6 +434,27 @@ Rational Rational::reduceFractionToLowestTerms(Rational fatRat) {
 
 ///////////////////////////////////////////////////////////
 //
+// Stream Functions
+
+void Rational::write(std::ostream& output) {
+	output << getNumerator() << "/" << getDenominator();
+}
+
+void Rational::write(std::ostream& output, int outputType) {
+	if(outputType == DECIMAL) {
+		output << toDouble();
+	} 
+}
+
+void Rational::read(std::istream& input) {
+	float floatRational;
+	input >> floatRational;
+
+	set(floatRational);
+}
+
+///////////////////////////////////////////////////////////
+//
 // Helpers
 
 double Rational::abs(double number)  {  

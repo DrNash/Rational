@@ -10,7 +10,13 @@ void validateRational(Rational rat, int p, int q) {
 	EXPECT_EQ(q, rat.getDenominator());
 }
 
-void validateArraySameOrderedMembers(int size, int *a, int *b) {
+void intArrayEqual(int size, int *a, int *b) {
+	for(int i = 0; i < size; i++) {
+		EXPECT_EQ(a[i], b[i]);
+	}
+}
+
+void charArrayEqual(int size, const char *a, const char *b) {
 	for(int i = 0; i < size; i++) {
 		EXPECT_EQ(a[i], b[i]);
 	}
@@ -534,7 +540,7 @@ TEST(Rational, FindPrimeFactors) {
 	int *primeFactors = Rational::findPrimeFactors(21931283, size); 
 	int expectedArray[size]; 
 	expectedArray[0] = 11, expectedArray[1] = 509, expectedArray[2] = 3917;
-	validateArraySameOrderedMembers(size, expectedArray, primeFactors);	
+	intArrayEqual(size, expectedArray, primeFactors);	
 }
 
 TEST(Rational, FindPrimeFactorsOfOne) {
@@ -542,7 +548,7 @@ TEST(Rational, FindPrimeFactorsOfOne) {
 	int *primeFactorsOfOne = Rational::findPrimeFactors(1, size);
 	int expectedArrayOfOne[size];
 	expectedArrayOfOne[0] = 1;
-	validateArraySameOrderedMembers(size, expectedArrayOfOne, primeFactorsOfOne);
+	intArrayEqual(size, expectedArrayOfOne, primeFactorsOfOne);
 }
 
 TEST(Rational, FindPrimeFactorsOfZero) {
@@ -550,7 +556,7 @@ TEST(Rational, FindPrimeFactorsOfZero) {
 	int *primeFactorsOfZero = Rational::findPrimeFactors(0, size);
 	int expectedArrayOfZero[size];
 	expectedArrayOfZero[0] = 0;
-	validateArraySameOrderedMembers(size, expectedArrayOfZero, primeFactorsOfZero);
+	intArrayEqual(size, expectedArrayOfZero, primeFactorsOfZero);
 }
 
 TEST(Rational, FindPrimeFactorsNegative) {
@@ -558,7 +564,7 @@ TEST(Rational, FindPrimeFactorsNegative) {
 	int *primeFactorsNegative = Rational::findPrimeFactors(-20, size);
 	int expectedArrayNegative[size];
 	expectedArrayNegative[0] = 2, expectedArrayNegative[1] = 2, expectedArrayNegative[2] = 5;
-	validateArraySameOrderedMembers(size, expectedArrayNegative, primeFactorsNegative);
+	intArrayEqual(size, expectedArrayNegative, primeFactorsNegative);
 }
 
 TEST(Rational, ReduceFractionToLowestTerms) {
@@ -583,6 +589,43 @@ TEST(Rational, ReduceFractionWholeNumberDoesntBomb) {
 	Rational myRat = Rational(8011234);
 	Rational reducedRat = Rational::reduceFractionToLowestTerms(myRat);
 	validateRational(reducedRat, 8011234, 1);
+}
+
+////////////////////////////////
+//
+// IO Tests
+
+TEST(Rational, RationalOutputToStreamInFraction) {
+	Rational myRat = Rational(1,2);
+	std::ostringstream stream;
+
+	myRat.write(stream);
+
+	std::string str = stream.str();
+	const char* chr = str.c_str();
+	const char expected[] = {'1','/','2','\0'};
+	charArrayEqual(4, expected, chr);
+}
+
+TEST(Rational, RationalOutputToStreamInDecimal) {
+	Rational myRat = Rational(1,2);
+	std::ostringstream stream;
+
+	myRat.write(stream, Rational::DECIMAL);
+
+	std::string str = stream.str();
+	const char* chr = str.c_str();
+	const char expected[] = {'0', '.','5','\0'};
+	charArrayEqual(3, expected, chr);
+}
+
+TEST(Rational, RationalReadInputFromStream) {
+	Rational myReadingRat = Rational();
+
+	std::istringstream stream("0.5");
+
+	myReadingRat.read(stream);
+	validateRational(myReadingRat, 1, 2);
 }
 
 ////////////////////////////////

@@ -18,6 +18,7 @@ public:
 	Rational(double);
 	// Default copy contructor works fine 
 
+	enum WriteOutput {FRACTION, DECIMAL};
 
  	////////////////////////////////////////////////////////////
   	//
@@ -71,6 +72,14 @@ public:
 	bool equal(Rational);
 	bool lessThanOrEqual(Rational);
 	bool greaterThanOrEqual(Rational);
+
+	////////////////////////////////////////////////////////////
+  	//
+  	// Stream Functions
+
+	void read(std::istream&);
+	void write(std::ostream&);
+	void write(std::ostream&, int);
 
  	////////////////////////////////////////////////////////////
   	//
